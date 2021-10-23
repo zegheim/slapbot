@@ -1,2 +1,2 @@
-# slap-bot
+# slapbot
 Slap your friend in Telegram
