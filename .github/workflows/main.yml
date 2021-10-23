@@ -22,13 +22,13 @@ jobs:
       - name: Install dependencies using Poetry
         run: poetry install --no-dev
       - name: Packages our source code into a .zip file
-        run: zip -r package.zip slapbot/
-      - name: Deploy to AWS Lambda
-        uses: appleboy/lambda-action@v0.1.5
-        with:
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID}}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws_region: ${{ secrets.AWS_REGION }}
-          function_name: SlapBot
-          zip_file: package.zip
+        run: pwd; ls -a
+      # - name: Deploy to AWS Lambda
+      #   uses: appleboy/lambda-action@v0.1.5
+      #   with:
+      #     aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID}}
+      #     aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws_region: ${{ secrets.AWS_REGION }}
+      #     function_name: SlapBot
+      #     zip_file: package.zip
 
