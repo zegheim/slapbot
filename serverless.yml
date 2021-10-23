@@ -1,0 +1,51 @@
+org: zegheim
+app: slapbot
+service: slapbot
+frameworkVersion: '2'
+configValidationMode: error
+useDotenv: true
+variablesResolutionMode: '20210326'
+unresolvedVariablesNotificationMode: error
+deprecationNotificationMode: error
+provider:
+  name: aws
+  stage: dev
+  region: us-east-1
+  memorySize: 128
+  runtime: python3.9
+  timeout: 3 
+  logRetentionInDays: 7
+  lambdaHashingVersion: 20201221
+  httpApi:
+    payload: '2.0'
+    cors: true
+    authorizers:
+      TokenAuthorizer:
+        type: request
+        functionName: TokenAuthorizer
+        resultTtlInSeconds: 0
+        enableSimpleResponses: true
+        payloadVersion: '2.0'
+functions:
+  SlapBot:
+    handler: handler.slap
+    description: Slap your friends in Telegram.
+    events:
+      - httpApi:
+          method: POST
+          path: /slap/{token}
+          authorizer:
+            name: TokenAuthorizer
+  TokenAuthorizer:
+    handler: handler.authorize
+    name: TokenAuthorizer
+    description: Authorizes slapbot to access AWS Lambda.
+    environment:
+      TELEGRAM_BOT_TOKEN: ${env:TELEGRAM_BOT_TOKEN}
+custom:
+    pythonRequirements:
+      usePoetry: true
+      zip: true
+      slim: true
+plugins:
+  - serverless-python-requirements

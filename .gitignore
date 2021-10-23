@@ -127,3 +127,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Serverless
+.serverless
+node_modules
+.requirements.zip
