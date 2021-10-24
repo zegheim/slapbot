@@ -132,3 +132,6 @@ dmypy.json
 .serverless
 node_modules
 .requirements.zip
+
+# VSCode
+.vscode
