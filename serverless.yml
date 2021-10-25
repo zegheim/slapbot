@@ -28,8 +28,8 @@ provider:
         payloadVersion: '2.0'
 functions:
   SlapBot:
-    handler: handler.slap
-    description: Slap your friends in Telegram.
+    handler: src.handler.slap
+    description: Slap your friends in Telegram and more!
     events:
       - httpApi:
           method: POST
@@ -37,9 +37,9 @@ functions:
           authorizer:
             name: TokenAuthorizer
   TokenAuthorizer:
-    handler: handler.authorize
+    handler: src.handler.authorize
     name: TokenAuthorizer
-    description: Authorizes slapbot to access AWS Lambda.
+    description: Authorizes SlapBot to access AWS Lambda.
     environment:
       TELEGRAM_BOT_TOKEN: ${env:TELEGRAM_BOT_TOKEN}
 custom:
