@@ -18,6 +18,7 @@ class StrEnum(str, Enum):
 
 class EntityType(StrEnum):
     BOT_COMMAND = "bot_command"
+    MENTION = "mention"
     TEXT_MENTION = "text_mention"
 
 

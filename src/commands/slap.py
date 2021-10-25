@@ -1,18 +1,19 @@
 import logging
 import random
-from typing import List, Optional
 
-import telegram
 from src.config.tools import SLAP_TOOLS
-from src.helpers.formatters import mention_user
+from src.helpers.adapters import EntityNameAndType
 from src.helpers.logging import add_logging
-from src.helpers.types import User
-from telegram import ChatAction, ParseMode
+from telegram import Bot, ChatAction
 
 
 class SlapBot:
-    def __init__(self, token: str, chat_id: int, parse_mode: str = ParseMode.HTML):
-        """Responsible for crafting & sending messages.
+    """Responsible for crafting & sending messages."""
+
+    VERB = "slaps"  # determines the action the bot actually uses
+
+    def __init__(self, token: str, chat_id: int):
+        """Initialises the bot.
 
         Parameters
         ----------
@@ -20,16 +21,12 @@ class SlapBot:
             Telegram bot token.
         chat_id : int
             Numerical ID of the chat this bot will send messages to.
-        parse_mode : str, optional
-            How Telegram formats its message, by default ParseMode.HTML
-            See https://core.telegram.org/bots/api#formatting-options for more information.
         """
-        self.parse_mode = parse_mode
         self.chat_id = chat_id
-        self.bot = telegram.Bot(token=token)
+        self.bot = Bot(token=token)
 
     @staticmethod
-    def get_slap_tool() -> str:
+    def _get_slap_tool() -> str:
         """Selects a random tool to slap someone with.
 
         Returns
@@ -40,21 +37,15 @@ class SlapBot:
 
         return random.choice(SLAP_TOOLS)
 
-    @staticmethod
-    def craft_message(
-        from_id: int, from_name: str, to_id: int, to_name: str, using: str
-    ) -> str:
+    @classmethod
+    def _craft_message(cls, sender_name: str, recipient_name: str, using: str) -> str:
         """Crafts the slap message to be sent to Telegram.
 
         Parameters
         ----------
-        from_id : int
-            Numerical ID of the user initiating the slap action.
-        from_name : str
-            What to mention the initiator by.
-        to_id : int
-            Numerical ID of the user receiving the slap action.
-        to_name : str
+        sender_name : str
+            What to mention the sender by.
+        recipient_name : str
             What to mention the recipient by.
         using : str
             The tool to be used in this slap action.
@@ -64,61 +55,50 @@ class SlapBot:
         str
             The crafted slap message.
         """
-        sender = mention_user(from_id, from_name)
-        recipient = mention_user(to_id, to_name)
 
-        return f"{sender} slaps {recipient} with {using}!"
+        return f"{sender_name} {cls.VERB} {recipient_name} with {using}!"
 
-    @staticmethod
-    @add_logging(level=logging.INFO)
-    def get_name_from_user(user: User, logger: logging.Logger) -> str:
-        """Attempts to get a valid name from the supplied user.
+    @classmethod
+    def _get_recipient_offset(cls, sender: EntityNameAndType) -> int:
+        """
+        Calculates the offset for the recipient in the crafted message.
+        Assumes crafted message follows the <SENDER> <VERB> <RECIPIENT> format.
 
         Parameters
         ----------
-        user : User
-            User dictionary to parse a valid name from.
+        sender : EntityNameAndType
+            Sender object.
 
         Returns
         -------
-        str
-            Either first name, username, or user ID in order of precedence.
+        int
+            Offset for recipient in the crafted message.
         """
-        name = str(user["id"])
+        return len(sender) + len(cls.VERB) + 2
 
-        if username := user.get("username"):
-            name = username
+    @add_logging(level=logging.DEBUG)
+    def slap(
+        self,
+        sender: EntityNameAndType,
+        recipient: EntityNameAndType,
+        logger: logging.Logger,
+    ) -> None:
+        """Slaps the recipient on behalf of the sender.
 
-        if first_name := user.get("first_name"):
-            name = first_name
+        Parameters
+        ----------
+        sender : EntityNameAndType
+            Sender object.
+        recipient : EntityNameAndType
+            Recipient object.
+        """
+        tool = SlapBot._get_slap_tool()
+        logger.debug(f"sender={sender}, recipient={recipient}, tool={tool}")
 
-        logger.debug(f"Got {name} from {user}")
-
-        return name
-
-    @add_logging(level=logging.INFO)
-    def slap(self, from_: User, to: User, logger: logging.Logger) -> None:
-        """Test"""
-        tool = SlapBot.get_slap_tool()
-        logger.info("Will slap using {tool}.")
-
-        from_name = SlapBot.get_name_from_user(from_)
-        to_name = SlapBot.get_name_from_user(to)
-
-        message = SlapBot.craft_message(from_["id"], from_name, to["id"], to_name, tool)
-
+        message = SlapBot._craft_message(sender.name, recipient.name, tool)
+        entities = [
+            sender.to_telegram_entity(offset=0),
+            recipient.to_telegram_entity(SlapBot._get_recipient_offset(sender)),
+        ]
         self.bot.send_chat_action(chat_id=self.chat_id, action=ChatAction.TYPING)
-        self.bot.send_message(
-            chat_id=self.chat_id, text=message, parse_mode=self.parse_mode
-        )
-
-
-def slap(token: str, chat_id: int, sender: User, recipients: List[User]) -> None:
-    bot = SlapBot(token, chat_id)
-
-    if not recipients:
-        bot.slap(sender, sender)
-        return
-
-    for recipient in recipients:
-        bot.slap(sender, recipient)
+        self.bot.send_message(chat_id=self.chat_id, text=message, entities=entities)

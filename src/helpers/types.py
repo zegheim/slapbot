@@ -3,13 +3,13 @@ from typing import List, Literal, TypedDict, Union
 from src.helpers.enums import ChatType, EntityType
 
 
-class _UserBase(TypedDict):
+class _UserRequired(TypedDict):
     id: int
     is_bot: bool
-
-
-class User(_UserBase, total=False):
     first_name: str
+
+
+class User(_UserRequired, total=False):
     last_name: str
     username: str
     language_code: str
@@ -24,12 +24,16 @@ class BotCommand(Entity):
     type: Literal[EntityType.BOT_COMMAND]
 
 
+class Mention(Entity):
+    type: Literal[EntityType.MENTION]
+
+
 class TextMention(Entity):
     type: Literal[EntityType.TEXT_MENTION]
     user: User
 
 
-AnyEntity = Union[BotCommand, TextMention]
+AnyEntity = Union[BotCommand, Mention, TextMention]
 
 
 class Chat(TypedDict):
@@ -42,12 +46,12 @@ class GroupChat(Chat):
     all_members_are_administrators: bool
 
 
-class _PrivateChatBase(Chat):
+class _PrivateChatRequired(Chat):
     type: Literal[ChatType.PRIVATE]
-
-
-class PrivateChat(_PrivateChatBase, total=False):
     first_name: str
+
+
+class PrivateChat(_PrivateChatRequired, total=False):
     last_name: str
     username: str
 
@@ -55,11 +59,10 @@ class PrivateChat(_PrivateChatBase, total=False):
 AnyChat = Union[GroupChat, PrivateChat]
 
 
-# "from" is a reserved keyword, using alternative syntax to define types
 Message = TypedDict(
     "Message",
     {
-        "entities": List[Union[BotCommand, TextMention]],
+        "entities": List[AnyEntity],
         "from": User,
         "message_id": int,
         "text": str,

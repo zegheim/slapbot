@@ -3,9 +3,8 @@ import logging
 import os
 from typing import Dict
 
-from telegram import Bot
-
-from src.commands.slap import slap
+from src.commands.slap import SlapBot
+from src.helpers.adapters import EntityNameAndType
 from src.helpers.logging import add_logging
 from src.helpers.message import send_message
 from src.helpers.parsers import is_command, parse_entity
@@ -39,8 +38,8 @@ def bot_command(event: Dict, context: Dict, logger: logging.Logger) -> Dict[str,
     message: Message = json.loads(event["body"])["message"]
     logger.debug(f"Received message={message} from Telegram API.")
 
-    entities = message["entities"]
     raw_message = message["text"]
+    entities = message["entities"]
     if entities[0]["type"] != EntityType.BOT_COMMAND:
         logger.warning(f"{raw_message} is not a bot command, nothing to see here.")
         return {"statusCode": 200}
@@ -50,13 +49,20 @@ def bot_command(event: Dict, context: Dict, logger: logging.Logger) -> Dict[str,
 
     command = parse_entity(raw_message, entities[0])
     if is_command(command, "/slap"):
-        sender = message["from"]
+        sender = EntityNameAndType.from_user(message["from"])
         recipients = [
-            entity["user"]
+            EntityNameAndType.from_entity(entity, raw_message)
             for entity in entities
-            if entity["type"] == EntityType.TEXT_MENTION
+            if entity["type"] == EntityType.MENTION
+            or entity["type"] == EntityType.TEXT_MENTION
         ]
-        slap(token, chat_id, sender, recipients)
+
+        bot = SlapBot(token, chat_id)
+        for recipient in recipients:
+            bot.slap(sender, recipient)
+
+        if not recipients:
+            bot.slap(sender, sender)
     else:
         logger.warning(f"{command} is not a valid command.")
         send_message(token, chat_id, f"{command} is not a valid command.")
