@@ -8,7 +8,7 @@ from telegram import Bot
 from src.commands.slap import slap
 from src.helpers.logging import add_logging
 from src.helpers.message import send_message
-from src.helpers.parsers import parse_entity
+from src.helpers.parsers import is_command, parse_entity
 from src.helpers.types import EntityType, Message
 
 
@@ -49,7 +49,7 @@ def bot_command(event: Dict, context: Dict, logger: logging.Logger) -> Dict[str,
     token: str = event["pathParameters"]["token"]
 
     command = parse_entity(raw_message, entities[0])
-    if command == "/slap":
+    if is_command(command, "/slap"):
         sender = message["from"]
         recipients = [
             entity["user"]

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "slapbot"
-version = "0.1.0"
+version = "0.1.1"
 description = "Slap your friends in Telegram."
 authors = ["Justin Arista Kasin <justin+github@aristakas.in>"]
 license = "MIT License"

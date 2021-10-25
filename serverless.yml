@@ -36,6 +36,8 @@ functions:
           path: /slap/{token}
           authorizer:
             name: TokenAuthorizer
+    environment:
+      TELEGRAM_BOT_HANDLE: ${env:TELEGRAM_BOT_HANDLE}
   TokenAuthorizer:
     handler: handler.authorize
     name: TokenAuthorizer
