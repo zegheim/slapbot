@@ -21,8 +21,21 @@ You would also need to have an [AWS](https://aws.amazon.com/) account and connec
 3. Copy `.env.example` to `.env`, and fill in the blanks with your bot token and bot username (don't include the `@` symbol). You may also wish to set `AWS_REGION` to a different region.
 4. Copy `config/tools.py.example` to `config/tools.py`. Feel free to replace the contents of `SLAP_TOOL` with your own content.
 5. Run `serverless deploy --verbose`. Assuming you've linked your AWS account to the serverless CLI, this should automatically provision all necessary resources to get your bot up and running. The CLI will output your bot endpoint (under endpoints -> POST) - make a note of this.
-6. Run the following command (make sure to replace `<TOKEN>` with your actual bot token):
+6. Run the following command (make sure to replace `<TOKEN>` with your actual bot token and `url` with your actual endpoint):
 
+    ```
+    curl --request POST --url https://api.telegram.org/bot<TOKEN>/setWebhook --header 'content-type: application/json' --data '{"url": "https://abcdefg.execute-api.us-east-1.amazonaws.com/slap/<TOKEN>"}'
+    ```
+    
+    This registers a webhook which the Bot API automatically calls whenever it receives a message.
+
+## Commands
+
+Currently this bot only supports one command.
+### `/slap <user1> <user2>`
+The `/slap` command slaps the tagged user using a random tool defined in `config/tools.py`. 
+
+If no argument is passed, this command slaps the sender instead.
 
 ## Development
 
