@@ -1,7 +1,7 @@
 import logging
 import random
 
-from src.config.tools import SLAP_TOOLS
+from config.tools import SLAP_TOOLS
 from src.helpers.adapters import EntityNameAndType
 from src.helpers.logging import add_logging
 from telegram import Bot, ChatAction
