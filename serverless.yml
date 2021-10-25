@@ -28,7 +28,7 @@ provider:
         payloadVersion: '2.0'
 functions:
   SlapBot:
-    handler: handler.slap
+    handler: handler.bot_command
     description: Slap your friends in Telegram and more!
     events:
       - httpApi:
@@ -42,10 +42,9 @@ functions:
     description: Authorizes SlapBot to access AWS Lambda.
     environment:
       TELEGRAM_BOT_TOKEN: ${env:TELEGRAM_BOT_TOKEN}
+plugins:
+  - serverless-python-requirements
 custom:
     pythonRequirements:
       usePoetry: true
-      zip: true
-      slim: true
-plugins:
-  - serverless-python-requirements
+      dockerizePip: true
