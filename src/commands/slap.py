@@ -60,7 +60,7 @@ class SlapBot:
             The crafted slap message.
         """
         verb = cls.VERB if not is_slap_self else cls.VERB_ALT
-        return f"{sender_name} {verb} {recipient_name} with {using}!"
+        return f"{sender_name} {verb} {recipient_name} with {using}"
 
     @classmethod
     def _get_recipient_offset(
