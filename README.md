@@ -1,6 +1,28 @@
 # slapbot
 Slap your friends in Telegram.
 
+## Setup
+
+### Pre-requisites
+
+You would need to install the following in your account:
+
+- [Python 3.9](https://www.python.org/downloads/release/python-390/)
+- [Poetry](https://python-poetry.org/)
+- [serverless CLI](https://www.serverless.com/)
+- [curl](https://curl.se/)
+
+You would also need to have an [AWS](https://aws.amazon.com/) account and connect it to serverless from the CLI.
+
+### Steps
+
+1. Create a bot by talking to BotFather following the steps listed [here](https://core.telegram.org/bots#3-how-do-i-create-a-bot), and make a note of your bot token.
+2. Still in the BotFather chat, use the `/setcommands` command and register the `slap` command.
+3. Copy `.env.example` to `.env`, and fill in the blanks with your bot token and bot username (don't include the `@` symbol). You may also wish to set `AWS_REGION` to a different region.
+4. Copy `config/tools.py.example` to `config/tools.py`. Feel free to replace the contents of `SLAP_TOOL` with your own content.
+5. Run `serverless deploy --verbose`. Assuming you've linked your AWS account to the serverless CLI, this should automatically provision all necessary resources to get your bot up and running. The CLI will output your bot endpoint (under endpoints -> POST) - make a note of this.
+6. Run the following command (make sure to replace `<TOKEN>` with your actual bot token):
+
 
 ## Development
 

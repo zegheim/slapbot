@@ -10,7 +10,7 @@ deprecationNotificationMode: error
 provider:
   name: aws
   stage: dev
-  region: us-east-1
+  region: ${env:AWS_REGION}
   memorySize: 128
   runtime: python3.9
   timeout: 3 
