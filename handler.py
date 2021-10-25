@@ -62,7 +62,7 @@ def bot_command(event: Dict, context: Dict, logger: logging.Logger) -> Dict[str,
             bot.slap(sender, recipient)
 
         if not recipients:
-            bot.slap(sender, sender)
+            bot.slap(sender, sender, is_slap_self=True)
     else:
         logger.warning(f"{command} is not a valid command.")
         send_message(token, chat_id, f"{command} is not a valid command.")
