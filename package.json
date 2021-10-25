@@ -1,0 +1,26 @@
+{
+  "name": "slapbot",
+  "description": "Slap your friends in Telegram.",
+  "version": "0.1.0",
+  "main": "handler.py",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "serverless-python-requirements": "^5.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zegheim/slapbot.git"
+  },
+  "author": "Justin Arista Kasin <justin+github@aristakas.in>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zegheim/slapbot/issues"
+  },
+  "homepage": "https://github.com/zegheim/slapbot#readme"
+}
