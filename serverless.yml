@@ -1,14 +1,12 @@
 org: zegheim
 app: slapbot
 service: slapbot
-
 frameworkVersion: '2'
 configValidationMode: error
 useDotenv: true
 variablesResolutionMode: '20210326'
 unresolvedVariablesNotificationMode: error
 deprecationNotificationMode: error
-
 provider:
   name: aws
   stage: dev
@@ -18,6 +16,7 @@ provider:
   timeout: 3 
   logRetentionInDays: 7
   lambdaHashingVersion: 20201221
+  versionFunctions: false
   httpApi:
     payload: '2.0'
     cors: true
@@ -40,12 +39,18 @@ functions:
             name: TokenAuthorizer
     environment:
       TELEGRAM_BOT_HANDLE: ${env:TELEGRAM_BOT_HANDLE}
+    reservedConcurrency: 5
+    maximumEventAge: 60
+    maximumRetryAttempts: 0
   TokenAuthorizer:
     handler: handler.authorize
     name: TokenAuthorizer
     description: Authorizes SlapBot to access AWS Lambda.
     environment:
       TELEGRAM_BOT_TOKEN: ${env:TELEGRAM_BOT_TOKEN}
+    reservedConcurrency: 5
+    maximumEventAge: 60
+    maximumRetryAttempts: 0
 plugins:
   - serverless-python-requirements
 custom:
