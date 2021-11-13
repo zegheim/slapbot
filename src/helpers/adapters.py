@@ -40,7 +40,8 @@ class EntityNameAndType:
         )
 
     def __hash__(self) -> int:
-        return hash((self.name, self.user, self.type))
+        user = frozenset(self.user.items()) if self.user else None
+        return hash((self.name, user, self.type))
 
     def __repr__(self) -> str:
         return (
