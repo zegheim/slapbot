@@ -24,8 +24,28 @@ class EntityNameAndType:
     user: Optional[User]
     type: Union[Literal[EntityType.MENTION], Literal[EntityType.TEXT_MENTION]]
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.name)
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, EntityNameAndType):
+            raise NotImplementedError(
+                f"Equality comparison is only supported for EntityNameAndType objects, received={type(other)}."
+            )
+
+        return (self.name, self.user, self.type) == (
+            other.name,
+            other.user,
+            other.type,
+        )
+
+    def __hash__(self) -> int:
+        return hash((self.name, self.user, self.type))
+
+    def __repr__(self) -> str:
+        return (
+            f"EntityNameAndType(name={self.name}, user={self.user}, type={self.type})"
+        )
 
     @staticmethod
     def from_user(user: User) -> EntityNameAndType:

@@ -50,12 +50,12 @@ def bot_command(event: Dict, context: Dict, logger: logging.Logger) -> Dict[str,
     command = parse_entity(raw_message, entities[0])
     if is_command(command, "/slap"):
         sender = EntityNameAndType.from_user(message["from"])
-        recipients = [
+        recipients = set(
             EntityNameAndType.from_entity(entity, raw_message)
             for entity in entities
             if entity["type"] == EntityType.MENTION
             or entity["type"] == EntityType.TEXT_MENTION
-        ]
+        )
 
         bot = SlapBot(token, chat_id)
         for recipient in recipients:
