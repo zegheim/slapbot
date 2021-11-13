@@ -1,12 +1,14 @@
 org: zegheim
 app: slapbot
 service: slapbot
+
 frameworkVersion: '2'
 configValidationMode: error
 useDotenv: true
 variablesResolutionMode: '20210326'
 unresolvedVariablesNotificationMode: error
 deprecationNotificationMode: error
+
 provider:
   name: aws
   stage: dev
